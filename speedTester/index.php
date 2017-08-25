@@ -1,4 +1,12 @@
 <?php
+/*
+ * TODO
+ * - selectbox - choose rootDir where start tree of scripts
+ * - get errors - if some script crashed
+ *      - write it next to result of speed
+ *      - the row will be red colored
+ */
+
 $rootTestFolderName = 'SpeedSamples';
 $originAppRootDir = $appRootDir = __DIR__ . '/' . $rootTestFolderName; //root location for *.php test files
 
