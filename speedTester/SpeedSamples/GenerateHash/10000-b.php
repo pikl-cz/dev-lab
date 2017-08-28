@@ -14,3 +14,4 @@ for($b = 0; $b < 10000; $b++) {
 		$uniqueHash[] = $editionHash;
 	}
 }
+*/
