@@ -88,5 +88,5 @@ class DevLab
 
 $list = new DevLab();
 $list->setRoot(__DIR__);
-$list->setIgnoreList(['.', '..', '.idea', '.git', '.gitignore', 'LICENSE', 'README.md']);
+$list->setIgnoreList(['.', '..', '.idea', '.git', '.gitignore', 'LICENSE', 'README.md', 'nbproject']);
 $list->run();
