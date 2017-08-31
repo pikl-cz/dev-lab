@@ -7,6 +7,7 @@ spl_autoload_register(function ($name) {
     echo "Want to load $name.\n";
     throw new Exception("Unable to load $name.");
 });
+
 /*
  * TODO: scan all subfolders from root and include them
  * nowadays it is hotfix solution

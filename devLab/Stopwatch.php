@@ -9,6 +9,7 @@ namespace Assist;
 
 class Stopwatch
 {
+
     /*
      * Get time imprint
      */
@@ -20,9 +21,23 @@ class Stopwatch
     /*
      * Prepare total execution time X-min Y-s Z-ms
      */
-    public function getExecutionTime($executionTimeStart, $executionTimeEnd)
+    public function getExecutionTime($executionTimeStart, $executionTimeEnd, $format = true)
     {
         $executionTimeResult = - ($executionTimeStart - $executionTimeEnd);
+
+        if ($format)
+        {
+            return $this->format($executionTimeResult);
+        }
+        else
+        {
+            return $executionTimeResult;
+        }
+    }
+
+    public function format($executionTimeResult)
+    {
+        $format = new \stdClass();
 
         $milliseconds = round($executionTimeResult * 1000);
         $total = explode(".", $milliseconds / 1000);
@@ -39,6 +54,14 @@ class Stopwatch
             $min = 0;
             $sec = $total[0];
         }
-        return '<b>' . $min . '</b>min <b>' . $sec . '</b>s <b>' . $ms . '</b>ms';
+
+        $format->min = $min;
+        $format->sec = $sec;
+        $format->ms = $ms;
+        $format->unformatted = $executionTimeResult;
+
+        return $format;
     }
+
+
 }
