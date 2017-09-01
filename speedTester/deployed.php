@@ -106,8 +106,7 @@ class visitor
         $this->pages = [];
         foreach ($xml->url as $url)
         {
-            $urlFromXmlToReplace = ''; // TODO: delete root of address via regular
-            $this->pages[str_replace($urlFromXmlToReplace, "", $url->loc)] = $attempts;
+            $this->pages[parse_url($url->loc)['path']] = $attempts;
         }
     }
 
@@ -277,7 +276,7 @@ try {
     //$attacker->setUrl('local', 'http://devlab.dev');
     $attacker->setPages($pages);
     $attacker->detect('[MYCODE]');
-    //$attacker->setSitemap('mujblogsitemap.xml', 2);
+    $attacker->setSitemap('mujblogsitemap.xml', 2);
 
     $attacker->run();
 
