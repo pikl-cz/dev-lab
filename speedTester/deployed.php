@@ -97,12 +97,23 @@ class visitor
      */
     public function setSitemap($file, $attempts = 1)
     {
-        if (!file_exists($file))
+        if(filter_var($file, FILTER_VALIDATE_URL))
         {
-            throw new Exception($file . ' doesnt exist.');
+            if(file_get_contents($file) === false)
+            {
+                throw new Exception('sitemap.xml is not loaded from ' . $file);
+            }
+            $response_xml_data = file_get_contents($file);
+            $myXMLData = $response_xml_data;
+        } else {
+            if (!file_exists($file))
+            {
+                throw new Exception($file . ' doesnt exist.');
+            }
+            $myXMLData = file_get_contents($file);
         }
-        $myXMLData = file_get_contents($file);
-        $xml=simplexml_load_string($myXMLData) or die("Error: Cannot create object");
+
+        $xml=simplexml_load_string($myXMLData) or die("Error: Nelze použít sitemapu.");
         $this->pages = [];
         foreach ($xml->url as $url)
         {
@@ -270,13 +281,16 @@ $pages = [
 try {
     $attacker = new visitor();
     $attacker->setUrl('devel', 'http://webar.pikl.cz');
-    $attacker->setUrl('devel2', 'http://www.hotelkopanice.cz');
+    //$attacker->setUrl('okac', 'https://www.okbase.cz');
+    //$attacker->setUrl('devel2', 'http://www.hotelkopanice.cz');
 
 //    $attacker->setUrl('master', 'http://gezedata.cz');
     //$attacker->setUrl('local', 'http://devlab.dev');
     $attacker->setPages($pages);
     $attacker->detect('[MYCODE]');
-    $attacker->setSitemap('mujblogsitemap.xml', 2);
+
+    //$attacker->setSitemap('https://www.okbase.cz/sitemap.xml', 1);
+    //$attacker->setSitemap('mujblogsitemap.xml', 2);
 
     $attacker->run();
 
