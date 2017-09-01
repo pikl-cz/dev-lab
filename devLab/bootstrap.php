@@ -13,6 +13,7 @@ spl_autoload_register(function ($name) {
  * nowadays it is hotfix solution
  */
 require __DIR__ . '/../devLab/Stopwatch.php';
+require __DIR__ . '/../devLab/Visitor.php';
 
 /*
  * Formatted var_dump

@@ -2,14 +2,8 @@
 
 namespace Assist;
 
-/*
- * TODO:
- * add possiblity to switch on/off format execution time (can get raw microtime)
- */
-
 class Stopwatch
 {
-
     /*
      * Get time imprint
      */
@@ -35,6 +29,9 @@ class Stopwatch
         }
     }
 
+    /*
+     *
+     */
     public function format($executionTimeResult)
     {
         $format = new \stdClass();
@@ -62,6 +59,4 @@ class Stopwatch
 
         return $format;
     }
-
-
 }
