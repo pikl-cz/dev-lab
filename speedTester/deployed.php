@@ -1,3 +1,19 @@
+<h2>Návod</h2>
+<ul>
+    <li>Povinné
+        <ol>
+            <li>Nastavit prostředí [devel, master, local ...] a jejich url</li>
+            <li>Nastavit podstránky: pole (umožňuje počet pokusů na podstránku) nebo sitemap.xml (nastavit počet opakování pro každou stránku stejně)</li>
+        </ol>
+    </li>
+
+    <li>Libovolně
+        <ol>
+            <li>Nastavit kus kódu co lze ve stránce detekovat. Například [--MYCODE--]</li>
+        </ol>
+    </li>
+</ul>
+
 <?php
 
 require __DIR__ . '/../devLab/bootstrap.php';
@@ -13,7 +29,10 @@ require __DIR__ . '/../devLab/bootstrap.php';
 
 class visitor
 {
-    protected $url, $pages, $log, $logFile;
+    protected $url, $pages, $log, $logFile, $detect;
+
+    protected $pageDetails = []; //headers and content
+
 
     public $stopwatch;
 
@@ -61,6 +80,19 @@ class visitor
     }
 
     /*
+      * @param string $subject User´s part of code to find in page
+      */
+    public function detect($subject)
+    {
+        if (!is_string($subject))
+        {
+            throw new Exception('Část kódu k detekci není ve formátu string.');
+        }
+        $this->detect = $subject;
+        return $this->detect;
+    }
+
+    /*
      * Get sitemap and generate links to visit
      */
     public function setSitemap($file, $attempts = 1)
@@ -79,13 +111,11 @@ class visitor
         }
     }
 
-    private function log($page, $time, $attempt)
+    private function log($environment, $page, $time, $attempt, $pageData)
     {
-        //All environments
-        foreach ($this->url as $environment)
-        {
-            $this->log[$environment][$page][$attempt]['time'] = $time;
-        }
+        $this->log[$environment][$page][$attempt]['time'] = $time;
+        $this->pageDetails[$environment][$page]['headers'] = $pageData['headers'];
+        $this->pageDetails[$environment][$page]['content'] = $pageData['content'];
 
         if (isset($this->logFile))
         {
@@ -95,7 +125,13 @@ class visitor
 
     private function saveLog()
     {
-        return void;
+        return;
+    }
+
+    private function parseHeaders($headersFromCurl)
+    {
+        $data = explode("\n", $headersFromCurl);
+        return $data;
     }
 
     private function link($page, $address)
@@ -105,25 +141,35 @@ class visitor
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $data[$page] = curl_exec($ch);
+        $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+        $headers = substr($data[$page], 0, $header_size);
+        $headers = $this->parseHeaders($headers);
+        $content = substr($data[$page], $header_size);
         curl_close($ch);
-        return $data;
+        return [
+            'headers' => $headers,
+            'content' => $content,
+        ];
     }
 
     private function scan()
     {
-        foreach ($this->url as $url)
+        foreach ($this->url as $environment => $url)
         {
+            unset($page);
             foreach ($this->pages as $page => $count)
             {
                 $address = $url . $page;
                 $address = str_replace('//', '/', $address);
                 for ($attempt = 1; $attempt <= $count; $attempt++)
                 {
+                    unset($pageData);
                     $start = $this->stopwatch->getImprint();
-                    $this->link($page, $address);
+                    $pageData = $this->link($page, $address);
                     $end = $this->stopwatch->getImprint();
                     $time = $this->stopwatch->getExecutionTime($start, $end);
-                    $this->log($page, $time, $attempt);
+
+                    $this->log($environment, $page, $time, $attempt, $pageData);
                 }
             }
         }
@@ -134,12 +180,14 @@ class visitor
         $result = [];
         foreach ($this->url as $environment => $url)
         {
-            foreach ($this->log[$url] as $page => $attempts)
+            foreach ($this->log[$environment] as $page => $attempts)
             {
                 foreach ($attempts as $key => $info)
                 {
                     $row = new \stdClass();
                     $row->attempts = $attempts;
+                    $row->headers = $this->pageDetails[$environment][$page]['headers'];
+                    $row->content = $this->pageDetails[$environment][$page]['content'];
                     $result[$environment][$page] = $row;
                 }
             }
@@ -157,7 +205,7 @@ class visitor
         return $total / count($attempts);
     }
 
-    private function print()
+    private function show()
     {
         $result = $this->getReadableLog();
 
@@ -170,6 +218,7 @@ class visitor
                 <td>Počet pokusů</td>
                 <td>Průměrný čas</td>
                 <td>Detail</td>
+                <td>HTTP</td>
             </thead>';
 
         foreach ($result as $environment => $pages)
@@ -182,14 +231,16 @@ class visitor
                     <td><a href="' . $this->url[$environment] . '" target="_blank">' . $environment . '</a></td>
                     <td><a href="' . $this->url[$environment] . $slug . '" target="_blank">' . $slug . '</a></td>
                     <td>' . count($info->attempts) . '</td>
-                    <td>' . $averageTime->min . 'min ' . $averageTime->sec . 'sec ' . $averageTime->ms . 'ms </td>
+                    <td>' . $averageTime->min . 'min ' . $averageTime->sec . 'sec ' . $averageTime->ms . 'ms </td>                    
                 ';
                 echo '<td>';
                 foreach($info->attempts as $detail)
                 {
                     echo $detail['time']->min . ' ' . $detail['time']->sec . ' ' . $detail['time']->ms . '<br>';
                 }
+
                 echo '</td>';
+                echo '<td>' . $info->headers[0] . '</td>';
                 echo '</tr>';
             }
         }
@@ -203,7 +254,7 @@ class visitor
     public function run()
     {
         $this->scan();
-        $this->print();
+        $this->show();
     }
 }
 
@@ -211,18 +262,21 @@ class visitor
  * pages => amount of visit
  */
 $pages = [
-    '/cs/category/doctrine-2/' => 5,
-    '/cs/tag/wamp/' => 1,
+    '/produkt/ts-4000/' => 2,
+    '/cs/tag/wamp/' => 3,
     '/cs/2017/03/' => 1,
-    'dsada' => 1
+    '/zitkova/rezervace-a-cenik' => 1
 ];
 
 try {
     $attacker = new visitor();
-    $attacker->setUrl('devel', 'http://pikl.cz');
-    //$attacker->setUrl('master', 'http://webar.pikl.cz');
-    $attacker->setUrl('local', 'http://devlab.dev');
+    $attacker->setUrl('devel', 'http://webar.pikl.cz');
+    $attacker->setUrl('devel2', 'http://www.hotelkopanice.cz');
+
+//    $attacker->setUrl('master', 'http://gezedata.cz');
+    //$attacker->setUrl('local', 'http://devlab.dev');
     $attacker->setPages($pages);
+    $attacker->detect('[MYCODE]');
     //$attacker->setSitemap('mujblogsitemap.xml', 2);
 
     $attacker->run();
