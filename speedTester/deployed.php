@@ -127,6 +127,13 @@ class visitor
         $this->pageDetails[$environment][$page]['headers'] = $pageData['headers'];
         $this->pageDetails[$environment][$page]['content'] = $pageData['content'];
 
+        if (isset($this->detect) && strpos($pageData['content'], $this->detect) !== false)
+        {
+            $this->pageDetails[$environment][$page]['detect'] = true;
+        } else {
+            $this->pageDetails[$environment][$page]['detect'] = false;
+        }
+
         if (isset($this->logFile))
         {
             $this->saveLog();
@@ -198,6 +205,7 @@ class visitor
                     $row->attempts = $attempts;
                     $row->headers = $this->pageDetails[$environment][$page]['headers'];
                     $row->content = $this->pageDetails[$environment][$page]['content'];
+                    $row->detect = $this->pageDetails[$environment][$page]['detect'];
                     $result[$environment][$page] = $row;
                 }
             }
@@ -229,12 +237,12 @@ class visitor
                 <td>Průměrný čas</td>
                 <td>Detail</td>
                 <td>HTTP</td>
+                <td>Detekován: ' . $this->detect . '</td>
             </thead>';
 
         foreach ($result as $environment => $pages)
         {
-            foreach ($pages as $slug => $info)
-            {
+            foreach ($pages as $slug => $info) {
                 $averageTime = $this->stopwatch->format($this->getAverageTime($info->attempts));
                 echo '<tr>';
                 echo '
@@ -244,13 +252,20 @@ class visitor
                     <td>' . $averageTime->min . 'min ' . $averageTime->sec . 'sec ' . $averageTime->ms . 'ms </td>                    
                 ';
                 echo '<td>';
-                foreach($info->attempts as $detail)
-                {
+                foreach ($info->attempts as $detail) {
                     echo $detail['time']->min . ' ' . $detail['time']->sec . ' ' . $detail['time']->ms . '<br>';
                 }
 
                 echo '</td>';
                 echo '<td>' . $info->headers[0] . '</td>';
+
+                if ($info->detect) {
+                    echo '<td>ano</td>';
+                } else
+                {
+                    echo '<td>ne</td>';
+                }
+
                 echo '</tr>';
             }
         }
@@ -282,12 +297,12 @@ try {
     $attacker = new visitor();
     $attacker->setUrl('devel', 'http://webar.pikl.cz');
     //$attacker->setUrl('okac', 'https://www.okbase.cz');
-    //$attacker->setUrl('devel2', 'http://www.hotelkopanice.cz');
+    $attacker->setUrl('devel2', 'http://www.hotelkopanice.cz');
 
 //    $attacker->setUrl('master', 'http://gezedata.cz');
     //$attacker->setUrl('local', 'http://devlab.dev');
     $attacker->setPages($pages);
-    $attacker->detect('[MYCODE]');
+    $attacker->detect('full-stack');
 
     //$attacker->setSitemap('https://www.okbase.cz/sitemap.xml', 1);
     //$attacker->setSitemap('mujblogsitemap.xml', 2);
