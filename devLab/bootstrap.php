@@ -12,8 +12,15 @@ spl_autoload_register(function ($name) {
  * TODO: scan all subfolders from root and include them
  * nowadays it is hotfix solution
  */
-require __DIR__ . '/../devLab/Stopwatch.php';
-require __DIR__ . '/../devLab/Visitor.php';
+
+foreach ([
+            'Stopwatch',
+            'FileFolderTree',
+            'Visitor',
+         ] as $className)
+{
+    require __DIR__ . '/../devLab/' . $className . '.php';
+}
 
 /*
  * Formatted var_dump

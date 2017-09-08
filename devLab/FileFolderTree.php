@@ -11,7 +11,7 @@ namespace Assist;
 class FileFolderTree
 {
     public $ignoreList, $root;
-    private $tree;
+    public $tree;
 
     /*
      * @param string $root First node of tree
@@ -40,12 +40,18 @@ class FileFolderTree
         return $this->ignoreList;
     }
 
+    /*
+     * Scan specific folder
+     */
     private function scanFolder($folder = null)
     {
         $folder = scandir($folder);
-        foreach ($this->ignoreList as $ignore)
+        if (isset($this->ignoreList))
         {
-            unset($folder[array_search($ignore, $folder, true)]);
+            foreach ($this->ignoreList as $ignore)
+            {
+                unset($folder[array_search($ignore, $folder, true)]);
+            }
         }
         return $folder;
     }
@@ -60,7 +66,7 @@ class FileFolderTree
     }
     */
 
-    private function buildTree($node = null)
+    public function buildTree($node = null)
     {
         if (!isset($node))
         {
@@ -95,5 +101,10 @@ class FileFolderTree
     public function run()
     {
         $this->buildTree();
+    }
+
+    public function getTree()
+    {
+        dump($this->tree);
     }
 }
