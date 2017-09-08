@@ -10,7 +10,7 @@ $pages = [
     '/zitkova/rezervace-a-cenik' => 1
 ];
 
-$tester = new \Assist\Visitor();
+$tester = new \Assist\EnvironmentalTest();
 $tester->setFileToSaveLog('multitest');
 $tester->setUrl('devel', 'http://webar.pikl.cz');
 $tester->setUrl('okac', 'https://www.okbase.cz');

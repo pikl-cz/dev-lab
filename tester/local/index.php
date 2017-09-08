@@ -18,7 +18,9 @@ require __DIR__ . '/../../devLab/bootstrap.php';
 
 $stopwatch = new \Assist\Stopwatch();
 
-$rootTestFolderName = 'SpeedSamples';
+
+
+$rootTestFolderName = 'samples';
 $originAppRootDir = $appRootDir = __DIR__ . '/' . $rootTestFolderName; //root location for *.php test files
 
 /*

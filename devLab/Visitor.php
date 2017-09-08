@@ -13,7 +13,7 @@ namespace Assist;
  */
 
 
-class Visitor
+class EnvironmentalTest
 {
     protected $url, $pages, $log, $logFile, $detect, $batch;
 
