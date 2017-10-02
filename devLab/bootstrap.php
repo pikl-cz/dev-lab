@@ -17,6 +17,7 @@ foreach ([
             'Stopwatch',
             'FileFolderTree',
             'Visitor',
+			'Password',
          ] as $className)
 {
     require __DIR__ . '/../devLab/' . $className . '.php';
