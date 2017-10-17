@@ -1,4 +1,8 @@
 <?php
+ob_implicit_flush(true);
+ob_end_flush();
+
+
 echo "<pre>";
 ini_set("xdebug.var_display_max_children", -1);
 ini_set("xdebug.var_display_max_data", -1);
@@ -16,13 +20,13 @@ function getConversionException() {
 /*
  * Konverze: $this->context->...->... na: $this->getService('')->...
  */
-function getServiceConversion($fileContent) {	
+function getServiceConversion($fileContent) {
 	$needle = '$this->context->';
 	$lastPos = 0;
 	$pattern = '/\$this->context->(\w*)->/';
-	$replacement = '$this->context->getService("${1}")->';			
+	$replacement = '$this->context->getService("${1}")->';
 
-	if (preg_match_all($pattern, $fileContent, $matches)) {		
+	if (preg_match_all($pattern, $fileContent, $matches)) {
 		echo '<table>';
 		foreach($matches[1] as $match) {
 			echo '<tr>';
@@ -31,9 +35,9 @@ function getServiceConversion($fileContent) {
 				$serviceName = $exceptions[$match];
 			} else {
 				$serviceName = $match;
-			}			
-			//$pattern = '/\\' . $needle . $match . '->/';	
-			$pattern = $needle . $match . '->';	
+			}
+			//$pattern = '/\\' . $needle . $match . '->/';
+			$pattern = $needle . $match . '->';
 			$replacement = $needle . 'getService(\'' . $serviceName . '\')->';
 			echo '<td style="color:red">' . $pattern . '</td><td style="color:green">' . $replacement . '</td>';
 			//echo $replacement;
@@ -42,7 +46,44 @@ function getServiceConversion($fileContent) {
 			echo '</tr>';
 		}
 		echo '</table>';
-	}		
+	}
+
+	return $fileContent;
+}
+
+/*
+ * Konverze: $form->onSuccess[] = $this->... na: $form->onSuccess[] = [$this, '...']
+ */
+function formActionConversion($fileContent) {
+	$needle = '->onSuccess[] = ';
+	$lastPos = 0;
+	$pattern = '/->onSuccess\[\] = \$this->(\w*);/';
+	$replacement = '->onSuccess[] = [$this, "${1}"];';
+
+	if (preg_match_all($pattern, $fileContent, $matches)) {
+		echo '<table>';
+
+        foreach($matches[1] as $match) {
+			echo '<tr>';
+			$exceptions = getConversionException();
+			if (array_key_exists($match, $exceptions)) {
+				$formAction = $exceptions[$match];
+			} else {
+                $formAction = $match;
+			}
+
+			$pattern = $needle . '$this->' . $match . ';';
+			$replacement = $needle . '[$this, \'' . $formAction . '\'];';
+			echo '<td style="color:red">' . $pattern . '</td><td style="color:green">' . $replacement . '</td>';
+			//echo $replacement;
+			//preg_replace($pattern, $replacement, $fileContent);
+
+			$fileContent = str_replace($pattern, $replacement, $fileContent);
+
+			echo '</tr>';
+		}
+		echo '</table>';
+	}
 
 	return $fileContent;
 }
@@ -53,35 +94,38 @@ function getServiceConversion($fileContent) {
 function listFolders($appRootDir){
 	//Obsah složky
     $folder = scandir($appRootDir);
-		
+
     unset($folder[array_search('.', $folder, true)]);
     unset($folder[array_search('..', $folder, true)]);
-	
+
     if (count($folder) < 1) {
         return;
 	}
-		
+
 	echo '<ul>';
-    foreach($folder as $item){    				
-		$itemPath = $appRootDir . '/' . $item;		
-		
+    foreach($folder as $item){
+		$itemPath = $appRootDir . '/' . $item;
+
         if (is_dir($itemPath)) {
 			//Pokud je složka - rekurzivně se zavolá funkce
 			listFolders($itemPath);
 		} else {
-			$path_parts = pathinfo($itemPath);		
+			$path_parts = pathinfo($itemPath);
 			if ($path_parts['extension'] === 'php' and file_exists($itemPath)) {
-				//Pokud je PHP soubor								
-				echo '<li>' . $appRootDir . '/<strong>' . $item . '</strong>';	
-				
+				//Pokud je PHP soubor
+				echo '<li>' . $appRootDir . '/<strong>' . $item . '</strong>';
+
 				$fileContent = file_get_contents($itemPath);
-				$convertedFileContent = getServiceConversion($fileContent);												
-				
+
+                $convertedFileContent = getServiceConversion($fileContent);
+//                $convertedFileContent = formActionConversion($fileContent);           // TODO: zkus pořešit aby běžely obě funkce :)
+
 				//Uložení úprav v souboru
-				file_put_contents($itemPath,$convertedFileContent);				
-				//var_dump($convertedFileContent);
-				echo '</li>';	
-			}			
+				file_put_contents($itemPath, $convertedFileContent);
+//				var_dump($convertedFileContent);
+				echo '</li>';
+                usleep(750000);
+            }
 		}
     }
 	echo '</ul>';
@@ -96,7 +140,8 @@ echo '<p>Přeješ si spustit úpravy v .php souborech (upgrade NETTE 2.2.3 -> 2.
 if (isset($_REQUEST['submit'])) {
 	$submit = $_REQUEST['submit'];
 	if ($submit === 'true') {
-		$appRootDir = __DIR__ . '/../app';
+//        $fc = $_REQUEST['fc'];
+        $appRootDir = __DIR__ . '/../app';
 		listFolders($appRootDir);
 		$message = 'Úspěch. Operace hotova.';		
 	} else {
