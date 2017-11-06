@@ -8,7 +8,6 @@ namespace Assist;
  * TODO: save log to file - preparede fce saveLog()
  * TODO: statistics - use graphics / via CSS3??
  * TODO: find "holes" - sql injection ... etc.
- * TODO: graphic loader - like percent use attempts
  * TODO: user friendly - design
  */
 
