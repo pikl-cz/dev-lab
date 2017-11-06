@@ -1,4 +1,9 @@
 <?php
+/*
+* Nastavení bufferu
+*/
+ob_implicit_flush(true);
+ob_end_flush();
 
 /*
  * Autoloading of classes

@@ -13,7 +13,7 @@ namespace Assist;
  */
 
 
-class EnvironmentalTest
+class Visitor
 {
     protected $url, $pages, $log, $logFile, $detect, $batch;
 
@@ -146,6 +146,8 @@ class EnvironmentalTest
 
     private function link($page, $address)
     {
+
+
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $address);
         curl_setopt($ch, CURLOPT_HEADER, 1);

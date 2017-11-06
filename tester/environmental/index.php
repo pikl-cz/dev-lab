@@ -14,15 +14,10 @@
         </ol>
     </li>
 
-    <li>Příklady použití
+    <li>Účel
         <ol>
-            <li>Testování přístupnosti stránek sitemapy / podstránek</li>
-            <li>Meření a logování rychlostí načítání stránek</li>
-            <li>Vyhledávání výrazu skrze web</li>
-            <!--
-            <li>Vyhledávání výrazu skrze web</li>
-            -->
-
+            <li>Primárně: Jednoduché otestování načítání sitemap.xml nebo výčtu linků v různých prostředích.</li>
+            <li>Sekundárně: Logování rychlostí jednotlivých stránek a vyhledávání regulárního výrazu v jejich obsahu.</li>
         </ol>
     </li>
 </ul>
@@ -35,8 +30,8 @@
 require __DIR__ . '../../../devLab/bootstrap.php';
 
 try {
-    require __DIR__ . '/tests/multitest.php';
-    //require __DIR__ . '/tests/okbase.php';
+    //require __DIR__ . '/tests/multitest.php';
+    require __DIR__ . '/tests/okbase.php';
 } catch (Exception $e) {
     echo $e->getMessage(), "\n";
 }
