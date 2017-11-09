@@ -2,7 +2,6 @@
 
 namespace Assist;
 
-
 /*
  * TODO: HTTPS se nenacitaji hlavicky
  * TODO: save log to file - preparede fce saveLog()

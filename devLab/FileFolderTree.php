@@ -12,12 +12,15 @@ class FileFolderTree
 {
     public $ignoreList, $root;
     public $tree;
+	protected $raw;
 
     /*
      * @param string $root First node of tree
+	 * @param boolean $raw Return raw data
      */
-    function __construct($root = null)
+    function __construct($root = null, $raw = false)
     {
+		$this->raw = $raw;
         if (isset($root))
         {
             $this->setRoot($root);
@@ -68,6 +71,7 @@ class FileFolderTree
 
     public function buildTree($node = null)
     {
+		$raw = [];
         if (!isset($node))
         {
             $node = $this->root;
@@ -91,11 +95,21 @@ class FileFolderTree
                 {
                     $this->tree[$node][] = $item;
                 }
-
-                $shortPath = str_replace($this->root, '', $node) . '/' . $item;
-                echo '<a href="' . $shortPath . '">' . $shortPath . '</a><br>';
+                
+				if ($this->raw)
+				{
+					$shortPath = $item;
+					$raw[] = $shortPath;
+				} else {
+					$shortPath = str_replace($this->root, '', $node) . '/' . $item;
+					echo '<a href="' . $shortPath . '">' . $shortPath . '</a><br>';	
+				}
             }
         }
+		if ($this->raw)
+		{
+			return $raw;
+		}
     }
 
     public function run()

@@ -1,32 +1,10 @@
 <?php
+
 /*
 * Nastavení bufferu
 */
 ob_implicit_flush(true);
 ob_end_flush();
-
-/*
- * Autoloading of classes
- */
-spl_autoload_register(function ($name) {
-    echo "Want to load $name.\n";
-    throw new Exception("Unable to load $name.");
-});
-
-/*
- * TODO: scan all subfolders from root and include them
- * nowadays it is hotfix solution
- */
-
-foreach ([
-            'Stopwatch',
-            'FileFolderTree',
-            'Visitor',
-			'Password',
-         ] as $className)
-{
-    require __DIR__ . '/../devLab/' . $className . '.php';
-}
 
 /*
  * Formatted var_dump
@@ -42,4 +20,23 @@ ini_set("xdebug.var_display_max_depth", -1);
 function dump($expression)
 {
     return var_dump($expression);
+}
+
+/*
+ * Autoloading of classes
+ */
+spl_autoload_register(function ($name) {
+    echo "Want to load $name.\n";
+    throw new Exception("Unable to load $name.");
+});
+
+/*
+ * TODO: automatically scan also subfolders
+ */
+require __DIR__ . '/FileFolderTree.php';
+$list = new \Assist\FileFolderTree(__DIR__, true);
+$list->setIgnoreList(['.', '..', 'templates', 'bootstrap.php', 'FileFolderTree.php']);
+foreach ($list->buildTree() as $className)
+{
+    require __DIR__ . '/' . $className;
 }
