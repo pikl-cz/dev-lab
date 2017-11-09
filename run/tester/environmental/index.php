@@ -90,7 +90,7 @@
      * Testování okbase na masteru
      */
 
-    require __DIR__ . '../../../devLab/bootstrap.php';
+    require __DIR__ . '../../../../core/bootstrap.php';
 
     try {
         //require __DIR__ . '/tests/multitest.php';

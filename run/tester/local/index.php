@@ -14,7 +14,7 @@
  * - check files to compare
  */
 
-require __DIR__ . '/../../devLab/bootstrap.php';
+require __DIR__ . '/../../../core/bootstrap.php';
 
 $stopwatch = new \Assist\Stopwatch();
 

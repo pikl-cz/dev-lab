@@ -1,6 +1,6 @@
 <?php
 
-require __DIR__ . '/../devLab/bootstrap.php';
+require __DIR__ . '/../../core/bootstrap.php';
 
 /*
  * TODO: získat obsah třídy z PHP souboru
