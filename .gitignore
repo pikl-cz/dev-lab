@@ -1,4 +1,4 @@
 .idea/
 .git/*
 nbproject/
-/devLab/tester/environmental/logs/*
+/run/tester/environmental/logs/*
