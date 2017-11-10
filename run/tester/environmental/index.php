@@ -101,7 +101,10 @@
     ?>
 </div>
 
-<script>
-    document.getElementById("loader").style.display = "none";
-    document.getElementById("myDiv").style.display = "block";
-</script>
+/*
+ * TODO: TEMPLATING
+ */
+$template = new \Assist\Template();
+$template->setLayout('templates/layout.htm');
+//$template->setDynamicContent();
+$template->draw();
