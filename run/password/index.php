@@ -1,8 +1,9 @@
 <h2>Password</h2>
 
 <?php
+require __DIR__ . '/../../core/runner.php';
+$run->just(['Password']);
 
-require __DIR__ . '/../../core/bootstrap.php';
 
 /*
  * Pokusy pro generování a prolamování silného hesla
