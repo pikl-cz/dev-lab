@@ -1,14 +1,13 @@
 <?php
 
-require __DIR__ . '/core/bootstrap.php';
+require __DIR__ . '/core/runner.php';
+$run->just(['FileFolderTree']);
 
 /*
- * Výpis základního stromu
+ * Show root
  */
-try {
-    $list = new \Assist\FileFolderTree(__DIR__);
-    $list->setIgnoreList(['.', '..', 'phpinfo.php', '.idea', '.git', '.gitignore', 'LICENSE', 'README.md', 'node_modules', 'angularjs', 'reactjs', 'core', 'nbproject', '_experiments', '_extensions', 'logs', 'samples', 'tests']);
-    $list->run();
-} catch (Exception $e) {
-    echo $e->getMessage(), "\n";
-}
+$pathDiff = '/run';
+$list = new \Assist\FileFolderTree(__DIR__ . $pathDiff);
+$list->setPathDiff($pathDiff);
+$list->setIgnoreList(['.', '..', 'phpinfo.php', '.idea', '.git', '.gitignore', 'LICENSE', 'README.md', 'node_modules', 'angularjs', 'reactjs', 'core', 'nbproject', '_experiments', '_extensions', 'logs', 'samples', 'tests']);
+$list->run();
