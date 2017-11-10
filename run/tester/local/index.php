@@ -14,11 +14,10 @@
  * - check files to compare
  */
 
-require __DIR__ . '/../../../core/bootstrap.php';
+require __DIR__ . '/../../../core/runner.php';
+$run->just(['Stopwatch']);
 
 $stopwatch = new \Assist\Stopwatch();
-
-
 
 $rootTestFolderName = 'samples';
 $originAppRootDir = $appRootDir = __DIR__ . '/' . $rootTestFolderName; //root location for *.php test files
@@ -26,7 +25,7 @@ $originAppRootDir = $appRootDir = __DIR__ . '/' . $rootTestFolderName; //root lo
 /*
  * Run speed test
  */
-echo '<p>Přeješ si test rychlosti skriptů ve složce <strong>' . $appRootDir . '</strong>? <a href="?submit=true">Ano</a> / <a href="?submit=false">Ne</a></p>';
+echo '<p>Do you want to run speed test of PHP in <strong>' . $appRootDir . '</strong>? <a href="?submit=true">Ano</a> / <a href="?submit=false">Ne</a></p>';
 
 
 if (isset($_REQUEST['submit'])) {
@@ -40,7 +39,7 @@ if (isset($_REQUEST['submit'])) {
 
     $executionTimeEnd = microtime(true); // timer-end
     $execTime = $stopwatch->getExecutionTime($executionTimeStart, $executionTimeEnd);
-		$message = '<hr><b>Total Execution Time:</b> ' . $execTime->min . ' ' . $execTime->sec . ' ' . $execTime->ms;
+		$message = '<hr><b>Total Execution Time:</b> ' . $execTime->min . 'min ' . $execTime->sec . 's ' . $execTime->ms . 'ms';
 	} else {
 		$message = 'Ne? Jak je libo.';		
 	}	
