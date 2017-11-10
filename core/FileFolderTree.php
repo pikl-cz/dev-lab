@@ -13,6 +13,7 @@ class FileFolderTree
     public $ignoreList, $root;
     public $tree;
 	protected $raw;
+	private $pathDiff;
 
     /*
      * @param string $root First node of tree
@@ -35,6 +36,12 @@ class FileFolderTree
     {
         $this->root = $root;
         return $this->root;
+    }
+	
+	public function setPathDiff($diff)
+    {
+        $this->pathDiff = $diff;
+        return $this->pathDiff;
     }
 
     public function setIgnoreList($toIgnore = array())
@@ -102,7 +109,12 @@ class FileFolderTree
 					$raw[] = $shortPath;
 				} else {
 					$shortPath = str_replace($this->root, '', $node) . '/' . $item;
-					echo '<a href="' . $shortPath . '">' . $shortPath . '</a><br>';	
+					echo '<a href="';
+					if (!empty($this->pathDiff))
+					{
+						echo $this->pathDiff;
+					}
+					echo $shortPath . '">' . $shortPath . '</a><br>';	
 				}
             }
         }
