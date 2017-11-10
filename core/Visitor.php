@@ -142,12 +142,10 @@ class Visitor
         return $data;
     }
 
-    private function link($page, $address)
+    public function link($page, $address)
     {
-
-
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $address);
+        curl_setopt($ch, CURLOPT_URL, $address . $page);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $data[$page] = curl_exec($ch);
@@ -155,7 +153,8 @@ class Visitor
         $headers = substr($data[$page], 0, $header_size);
         $headers = $this->parseHeaders($headers);
         $content = substr($data[$page], $header_size);
-        curl_close($ch);
+        curl_close($ch);		
+		
         return [
             'headers' => $headers,
             'content' => $content,
