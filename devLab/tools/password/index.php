@@ -1,7 +1,7 @@
 <h2>Password</h2>
 
 <?php
-require __DIR__ . '/../../core/runner.php';
+require __DIR__ . '/../../core/php/runner.php';
 $run->just(['Password']);
 
 

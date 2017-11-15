@@ -28,7 +28,7 @@
  * Testování okbase na masteru
  */
 
-require __DIR__ . '/../../../core/runner.php';
+require __DIR__ . '/../../../core/php/runner.php';
 $run->just(['Visitor']);
 $tester = new \Assist\Visitor;
 

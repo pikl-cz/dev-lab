@@ -14,7 +14,7 @@
  * - check files to compare
  */
 
-require __DIR__ . '/../../../core/runner.php';
+require __DIR__ . '/../../../core/php/runner.php';
 $run->just(['Stopwatch']);
 
 $stopwatch = new \Assist\Stopwatch();

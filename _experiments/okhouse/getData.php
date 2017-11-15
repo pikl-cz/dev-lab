@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 /*
  * Parts of core to load
  */
-require __DIR__ . '/../../core/runner.php';
+require __DIR__ . '/../../devLab/core/php/runner.php';
 $run->just(['Visitor']);
 
 $visitor = new \Assist\Visitor;

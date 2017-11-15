@@ -1,0 +1,29 @@
+{
+    "name": "devLab",
+    "description": "Developer tools and use cases :).",
+    "type": "project",
+    "license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+    "authors": [
+        {
+            "name": "Jan Pikl",
+            "email": "fjpikl@gmail.com",
+            "url": "http://pikl.cz"
+        }
+    ],
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "devLab/"
+        }
+    ],
+    "require": {
+        "php": ">= 5.6",
+        "": "",
+    },
+    "config": {
+        "platform": {
+            "php": "~5.6"
+        }
+    }
+}

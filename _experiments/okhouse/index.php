@@ -64,6 +64,10 @@
 
 		<div style="display:none;" id="myDiv" class="animate-bottom">
 		  <div id="dataTest"></div>
+		  <canvas id="myCanvas" style="margin: 0px auto; border: 2px solid red; width:50%; height:50%; overflow: auto; min-height: 50px;"></canvas> 
+		  <div id="dataTest2" style="margin: 0px auto; border: 2px solid black; width:50%; height:50%; overflow: auto; min-height: 50px;"></div>
+		  
+		  
 		</div>
 
 		<script>	
@@ -71,7 +75,19 @@
 			 * Filter data
 			 */			
 			function filterData(data) {
-				return filtered;
+				var doc = new DOMParser().parseFromString(data, "text/html")
+				
+				//gets table
+				console.log(doc);
+
+				var test = new XMLSerializer().serializeToString(doc);
+				var test2 = test2.getElementById('content');
+		alert(test2);				
+				document.getElementById('dataTest2').innerHTML = test2;
+				//alert(test2); 
+
+				
+//				return filtered;
 			}
 			
 			/*
